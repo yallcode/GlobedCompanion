@@ -1,0 +1,68 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: android64
+            abi: arm64-v8a
+          - target: android32
+            abi: armeabi-v7a
+
+    name: ${{ matrix.target }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup NDK
+        uses: nttld/setup-ndk@v1
+        id: ndk
+        with:
+          ndk-version: r28
+
+      - name: Clone Geode SDK
+        run: |
+          git clone --depth 1 https://github.com/geode-sdk/geode.git $HOME/geode-sdk
+          echo "GEODE_SDK=$HOME/geode-sdk" >> $GITHUB_ENV
+
+      - name: Install Geode CLI
+        uses: geode-sdk/cli/.github/actions/setup@main
+
+      - name: Setup Geode Profile (required by CLI)
+        run: |
+          mkdir -p /tmp/fake-gd
+          geode profile add --name main /tmp/fake-gd
+
+      - name: Install Geode Loader Binaries
+        run: |
+          TARGET_GEODE_VERSION=$(jq -r '.geode' mod.json)
+          geode sdk update "$TARGET_GEODE_VERSION"
+          geode sdk install-binaries --platform ${{ matrix.target }} --version "$TARGET_GEODE_VERSION"
+
+      - name: Configure
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DGEODE_SDK=$GEODE_SDK \
+            -DCMAKE_TOOLCHAIN_FILE=${{ steps.ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
+            -DANDROID_ABI=${{ matrix.abi }} \
+            -DANDROID_STL=c++_shared \
+            -DANDROID_PLATFORM=android-23
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: GlobedCompanion-${{ matrix.target }}
+          path: build/**/*.geode

@@ -1,0 +1,20 @@
+{
+  "geode": "3.0.0",
+  "gd": {
+    "win": "2.2074",
+    "android": "2.2074"
+  },
+  "id": "yallcode.globed-companion",
+  "name": "GlobedCompanion",
+  "version": "v1.0.0",
+  "developer": "YallCode",
+  "description": "Adds a voice chat button to the in-game HUD for Globed on mobile.",
+  "dependencies": [
+    {
+      "id": "dankmeme.globed2",
+      "version": ">=1.0.0",
+      "required": true
+    }
+  ],
+  "platforms": ["android32", "android64"]
+}
