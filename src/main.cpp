@@ -36,7 +36,7 @@ public:
 
         // Mic icon — we use a built-in GD frame as a placeholder.
         // Swap this out with a custom mic sprite later (resources/mic.png).
-        m_icon = CCSprite::createWithSpriteFrameName("GJ_volumeBtn_001.png");
+        m_icon = CCSprite::createWithSpriteFrameName(resources/mic.png);
         if (!m_icon) {
             // fallback: just a dot so the button is still tappable
             m_icon = CCSprite::create();

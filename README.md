@@ -4,15 +4,6 @@ A Geode mod that adds a voice chat button to the in-game HUD for mobile Globed p
 
 **Requires:** [Globed2](https://github.com/dankmeme01/globed2)
 
-## Building
-
-Open in GitHub Codespaces, then:
-
-```bash
-cmake -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
-```
-
 Or just push to `main` and let GitHub Actions build the `.geode` file for you.
 
 ## TODO
