@@ -1,0 +1,18 @@
+      - name: Clone Geode SDK
+        run: |
+          TARGET_GEODE_VERSION=$(jq -r '.geode' mod.json)
+          git clone --depth 1 --branch "v$TARGET_GEODE_VERSION" https://github.com $HOME/geode-sdk
+          echo "GEODE_SDK=$HOME/geode-sdk" >> $GITHUB_ENV
+
+      - name: Install Geode CLI
+        uses: geode-sdk/cli/.github/actions/setup@main
+
+      - name: Setup Geode Profile (required by CLI)
+        run: |
+          mkdir -p /tmp/fake-gd
+          geode profile add --name main /tmp/fake-gd
+
+      - name: Install Geode Loader Binaries
+        run: |
+          TARGET_GEODE_VERSION=$(jq -r '.geode' mod.json)
+          geode sdk install-binaries --platform ${{ matrix.target }} --version "$TARGET_GEODE_VERSION"
